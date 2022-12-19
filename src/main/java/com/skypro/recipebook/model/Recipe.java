@@ -8,9 +8,9 @@ public class Recipe {
     private String name;
     private int time;
     private LinkedList<Ingredient> ingredients;
-    private TreeMap<Integer, String> guide;
+    private LinkedList<String> guide;
 
-    public Recipe(String name, int time, LinkedList<Ingredient> ingredients, TreeMap<Integer, String> guide) {
+    public Recipe(String name, int time, LinkedList<Ingredient> ingredients, LinkedList<String> guide) {
         setName(name);
         setTime(time);
         setIngredients(ingredients);
@@ -53,11 +53,11 @@ public class Recipe {
         }
     }
 
-    public TreeMap<Integer, String> getGuide() {
+    public LinkedList<String> getGuide() {
         return guide;
     }
 
-    public void setGuide(TreeMap<Integer, String> guide) {
+    public void setGuide(LinkedList<String> guide) {
         if (guide == null) {
             throw new RuntimeException("Инструкция отсутствуют");
         } else {
