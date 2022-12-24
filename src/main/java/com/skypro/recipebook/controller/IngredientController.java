@@ -6,7 +6,7 @@ import com.skypro.recipebook.service.impl.IngredientServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/ingredient")
+@RequestMapping("/ingredients")
 public class IngredientController {
 
     IngredientServiceImpl ingredientService;
@@ -15,12 +15,12 @@ public class IngredientController {
         this.ingredientService = ingredientService;
     }
 
-    @GetMapping("/get_ingredient/{id}")
+    @GetMapping("/{id}")
     public Object getIngredient(@PathVariable int id) {
         return ingredientService.get(id);
     }
 
-    @PostMapping("/add_ingredient")
+    @PostMapping
     public String addIngredient(@RequestBody Ingredient ingredient) {
         return ingredientService.add(ingredient);
     }

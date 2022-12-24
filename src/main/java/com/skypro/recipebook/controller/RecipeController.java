@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.NameNotFoundException;
+
 @RestController
-@RequestMapping("/recipe")
+@RequestMapping("/recipes")
 public class RecipeController {
     RecipeServiceImpl recipeService;
 
@@ -16,7 +18,7 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping("/get_recipe/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getRecipe(@PathVariable int id) {
         try {
             Recipe recipe = recipeService.get(id);
@@ -28,7 +30,7 @@ public class RecipeController {
         }
     }
 
-    @PostMapping("/add_recipe")
+    @PostMapping
     public String addRecipe(@RequestBody Recipe recipe) {
         return recipeService.add(recipe);
     }
