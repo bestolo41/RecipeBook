@@ -1,30 +1,23 @@
 package com.skypro.recipebook.model;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
 public class AppError {
-    private int statusCode;
-    private String message;
-
-    public int getStatusCode() {
-        return statusCode;
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> notFoundException(NotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public AppError() {
-    }
-
-    public AppError(int statusCode, String message) {
-        this.statusCode = statusCode;
-        this.message = message;
+    @ExceptionHandler(ReAddingException.class)
+    public ResponseEntity<String> ReAddingException(ReAddingException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
     }
 }
