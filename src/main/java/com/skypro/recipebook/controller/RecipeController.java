@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.NameNotFoundException;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/recipes")
 public class RecipeController {
-    RecipeService recipeService;
+    private final RecipeService recipeService;
 
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
@@ -43,18 +45,18 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.delete(id));
     }
 
-    @GetMapping("/contain/{id}")
-    public ResponseEntity<HashSet<Recipe>> getRecipesByIngredientId(@PathVariable int id) {
+    @GetMapping("/ingredient/{id}")
+    public ResponseEntity<Set<Recipe>> getRecipesByIngredientId(@PathVariable int id) {
         return ResponseEntity.ok(recipeService.getRecipesByIngredientId(id));
     }
 
-    @PostMapping("/contain")
-    public ResponseEntity<HashSet<Recipe>> findRecipeByFewIngredients(@RequestBody LinkedList<Ingredient> ingredients) {
-        return ResponseEntity.ok(recipeService.findRecipeByFewIngredients(ingredients));
+    @GetMapping("/ingredient")
+    public ResponseEntity<Set<Recipe>> findRecipeByFewIngredients(@RequestParam (required = true) LinkedList<Integer> ids) {
+        return ResponseEntity.ok(recipeService.findRecipeByFewIngredients(ids));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<LinkedList<Recipe>> getAllRecipesPageByPage(@RequestParam int page) {
+    @GetMapping
+    public ResponseEntity<List<Recipe>> getAllRecipesPageByPage(@RequestParam int page) {
         return ResponseEntity.ok(recipeService.recipesPageByPage(page));
     }
 }

@@ -8,13 +8,14 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class IngredientServiceImpl implements IngredientService {
     private static int id = 1;
-    private static HashMap<Integer, Ingredient> ingredients = new HashMap<>();
+    private static Map<Integer, Ingredient> ingredients = new HashMap<>();
 
-    public static HashMap<Integer, Ingredient> getIngredients() {
+    public static Map<Integer, Ingredient> getIngredients() {
         return ingredients;
     }
 

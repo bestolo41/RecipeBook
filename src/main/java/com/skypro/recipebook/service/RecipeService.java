@@ -3,8 +3,9 @@ package com.skypro.recipebook.service;
 import com.skypro.recipebook.model.Ingredient;
 import com.skypro.recipebook.model.Recipe;
 
-import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public interface RecipeService {
     public String add(Recipe recipe);
@@ -15,9 +16,9 @@ public interface RecipeService {
 
     String delete(int id);
 
-    HashSet<Recipe> getRecipesByIngredientId(int id);
+    Set<Recipe> getRecipesByIngredientId(int id);
 
-    HashSet<Recipe> findRecipeByFewIngredients(LinkedList<Ingredient> ingredients);
+    Set<Recipe> findRecipeByFewIngredients(LinkedList<Integer> ids);
 
-    LinkedList<Recipe> recipesPageByPage(int page);
+    List<Recipe> recipesPageByPage(int page);
 }
