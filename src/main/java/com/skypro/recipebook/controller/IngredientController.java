@@ -4,6 +4,7 @@ import com.skypro.recipebook.model.Ingredient;
 import com.skypro.recipebook.model.Recipe;
 import com.skypro.recipebook.service.IngredientService;
 import com.skypro.recipebook.service.impl.IngredientServiceImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,12 +18,21 @@ public class IngredientController {
     }
 
     @GetMapping("/{id}")
-    public Object getIngredient(@PathVariable int id) {
-        return ingredientService.get(id);
+    public ResponseEntity<Ingredient> getIngredient(@PathVariable int id) {
+        return ResponseEntity.ok(ingredientService.get(id));
     }
 
     @PostMapping
-    public String addIngredient(@RequestBody Ingredient ingredient) {
-        return ingredientService.add(ingredient);
+    public ResponseEntity<String> addIngredient(@RequestBody Ingredient ingredient) {
+        return ResponseEntity.ok(ingredientService.add(ingredient));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<String> editIngredient(@PathVariable int id, @RequestBody Ingredient newIngredient) {
+        return ResponseEntity.ok(ingredientService.edit(id, newIngredient));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteIngredient(@PathVariable int id) {
+        return ResponseEntity.ok(ingredientService.delete(id));
     }
 }

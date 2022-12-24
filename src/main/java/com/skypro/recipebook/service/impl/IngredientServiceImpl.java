@@ -12,7 +12,12 @@ import java.util.HashMap;
 @Service
 public class IngredientServiceImpl implements IngredientService {
     private static int id = 1;
-    private final static HashMap<Integer, Ingredient> ingredients = new HashMap<>();
+    private static HashMap<Integer, Ingredient> ingredients = new HashMap<>();
+
+    public static HashMap<Integer, Ingredient> getIngredients() {
+        return ingredients;
+    }
+
     @Override
     public String add(Ingredient ingredient) {
         for (Ingredient value : ingredients.values()) {
@@ -31,5 +36,24 @@ public class IngredientServiceImpl implements IngredientService {
         } else {
             throw new NotFoundException("Ингредиента с таким id не существует");
         }
+    }
+
+    @Override
+    public String edit(int id, Ingredient newIngredient) {
+        if (ingredients.containsKey(id)) {
+            Ingredient oldIngredient = ingredients.get(id);
+            ingredients.put(id, newIngredient);
+            return "Ингредиент " + oldIngredient.getName() + " обновлен";
+        }
+        throw new NotFoundException("Ингредиента с таким id не существует");
+    }
+
+    @Override
+    public String delete(int id) {
+        if (ingredients.containsKey(id)) {
+            ingredients.remove(id);
+            return "Ингредиент с id " + id + " удален";
+        }
+        throw new NotFoundException("Ингредиента с таким id не существует");
     }
 }
