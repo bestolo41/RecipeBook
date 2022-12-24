@@ -239,29 +239,10 @@ Content-Type: application/json
 DELETE http://localhost:8080/ingredients/1
 
 ### Получение рецептов, содержащих ингредиент с id
-GET http://localhost:8080/recipes/contain/5
+GET http://localhost:8080/recipes/ingredient/5
 
 ###  Поиск рецептов по нескольким ингредиентам
-POST http://localhost:8080/recipes/contain
-Content-Type: application/json
-
-[
-  {
-    "name": "Куриное яйцо",
-    "count": 2,
-    "measureUnit": "шт."
-  },
-  {
-    "name": "Пшеничная мука",
-    "count": 6,
-    "measureUnit": "ст.л."
-  },
-  {
-    "name": "Сахар",
-    "count": 2,
-    "measureUnit": "ст.л."
-  }
-]
+GET http://localhost:8080/recipes/ingredient?ids=2,3
 
 ### Постраничный вывод рецептов
 GET http://localhost:8080/recipes/all?page=1

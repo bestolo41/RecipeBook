@@ -4,19 +4,17 @@ import com.skypro.recipebook.model.Ingredient;
 import com.skypro.recipebook.model.NotFoundException;
 import com.skypro.recipebook.model.ReAddingException;
 import com.skypro.recipebook.model.Recipe;
+import com.skypro.recipebook.service.IngredientService;
 import com.skypro.recipebook.service.RecipeService;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
     private static int id = 1;
-    private final static HashMap<Integer, Recipe> recipeBook = new HashMap<>();
+    private final static Map<Integer, Recipe> recipeBook = new HashMap<>();
 
     @Override
     public String add(Recipe recipe) {
@@ -58,8 +56,8 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public HashSet<Recipe> getRecipesByIngredientId(int id) {
-        HashSet<Recipe> recipesContainsIngredientWithId = new HashSet<>();
+    public Set<Recipe> getRecipesByIngredientId(int id) {
+        Set<Recipe> recipesContainsIngredientWithId = new HashSet<>();
         String ingredientName;
 
         if (IngredientServiceImpl.getIngredients().containsKey(id)) {
@@ -84,11 +82,16 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public HashSet<Recipe> findRecipeByFewIngredients(LinkedList<Ingredient> ingredients) {
-        HashSet<Recipe> recipesContainsFewIngredients = new HashSet<>();
+    public Set<Recipe> findRecipeByFewIngredients(LinkedList<Integer> ids) {
+        Set<Recipe> recipesContainsFewIngredients = new HashSet<>();
+        List<Ingredient> ingredientsForSearch = new LinkedList<>();
+
+        for (int i = 0; i < ids.size(); i++) {
+            ingredientsForSearch.add(IngredientServiceImpl.getIngredients().get(ids.get(i)));
+        }
 
         for (Recipe recipe : recipeBook.values()) {
-            if (recipe.getIngredients().containsAll(ingredients)) {
+            if (recipe.getIngredients().containsAll(ingredientsForSearch)) {
                 recipesContainsFewIngredients.add(recipe);
             }
         }
@@ -100,9 +103,9 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public LinkedList<Recipe> recipesPageByPage(int page) {
+    public List<Recipe> recipesPageByPage(int page) {
         int countOnPage = 10;
-        LinkedList<Recipe> recipesForResponse = new LinkedList<>();
+        List<Recipe> recipesForResponse = new LinkedList<>();
         Object[] allRecipes = recipeBook.values().toArray();
 
         for (int i = (page - 1) * countOnPage; i < page * countOnPage - 1; i++) {
