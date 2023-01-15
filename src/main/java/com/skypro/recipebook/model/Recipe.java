@@ -2,12 +2,14 @@ package com.skypro.recipebook.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.TreeMap;
 @Getter
 @EqualsAndHashCode
+@NoArgsConstructor
 public class Recipe {
     private String name;
     private int time;
