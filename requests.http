@@ -100,10 +100,10 @@ Content-Type: application/json
 
 
 ### Получение рецепта по id
-GET http://localhost:8080/recipes/3
+GET http://localhost:8080/recipes/1
 
 ### Обновление рецепта по id
-PUT http://localhost:8080/recipes/3
+PUT http://localhost:8080/recipes/1
 Content-Type: application/json
 
 {
@@ -239,7 +239,7 @@ Content-Type: application/json
 DELETE http://localhost:8080/ingredients/1
 
 ### Получение рецептов, содержащих ингредиент с id
-GET http://localhost:8080/recipes/contain/5
+GET http://localhost:8080/recipes/contain/2
 
 ###  Поиск рецептов по нескольким ингредиентам
 POST http://localhost:8080/recipes/contain

@@ -20,4 +20,8 @@ public interface RecipeService {
     HashSet<Recipe> findRecipeByFewIngredients(LinkedList<Ingredient> ingredients);
 
     LinkedList<Recipe> recipesPageByPage(int page);
+
+    void saveToRecipeFile();
+
+    void readFromRecipeFile();
 }

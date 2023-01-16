@@ -1,22 +1,35 @@
 package com.skypro.recipebook.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skypro.recipebook.model.Ingredient;
 import com.skypro.recipebook.model.NotFoundException;
 import com.skypro.recipebook.model.ReAddingException;
 import com.skypro.recipebook.model.Recipe;
+import com.skypro.recipebook.service.FileService;
 import com.skypro.recipebook.service.RecipeService;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
+    final private FileService fileService;
     private static int id = 1;
-    private final static HashMap<Integer, Recipe> recipeBook = new HashMap<>();
+    private static HashMap<Integer, Recipe> recipeBook = new HashMap<>();
+
+    public RecipeServiceImpl(FileService fileService) {
+        this.fileService = fileService;
+    }
+    @PostConstruct
+    void init() {
+        readFromRecipeFile();
+    }
 
     @Override
     public String add(Recipe recipe) {
@@ -26,6 +39,7 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
         recipeBook.put(id++, recipe);
+        saveToRecipeFile();
         return "Рецепт " + recipe.getName() + " добавлен в книгу";
     }
 
@@ -40,9 +54,10 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public String edit(int id, Recipe newRecipe) {
-        if (recipeBook.containsKey(id)) {
+       if (recipeBook.containsKey(id)) {
             Recipe oldRecipe = recipeBook.get(id);
             recipeBook.put(id, newRecipe);
+            saveToRecipeFile();
             return "Рецепт " + oldRecipe.getName() + " обновлен";
         }
         throw new NotFoundException("Рецепта с таким id не существует");
@@ -52,6 +67,7 @@ public class RecipeServiceImpl implements RecipeService {
     public String delete(int id) {
         if (recipeBook.containsKey(id)) {
             recipeBook.remove(id);
+            saveToRecipeFile();
             return "Рецепт с id " + id + " удален";
         }
         throw new NotFoundException("Рецепта с таким id не существует");
@@ -114,5 +130,28 @@ public class RecipeServiceImpl implements RecipeService {
         }
         return recipesForResponse;
     }
+
+    @Override
+    public void saveToRecipeFile() {
+        try {
+            String json = new ObjectMapper().writeValueAsString(recipeBook);
+            fileService.saveToRecipeFile(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void readFromRecipeFile() {
+        String json = fileService.readFromRecipeFile();
+        try {
+            recipeBook = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Recipe>>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
 }
