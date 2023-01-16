@@ -11,5 +11,7 @@ public interface IngredientService {
     String edit(int id, Ingredient newIngredient);
 
     String delete(int id);
+
+    void readFromIngredientFile();
 }
 

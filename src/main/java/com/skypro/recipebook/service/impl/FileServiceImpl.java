@@ -2,14 +2,24 @@ package com.skypro.recipebook.service.impl;
 
 import com.skypro.recipebook.model.NotFoundException;
 import com.skypro.recipebook.service.FileService;
+import com.skypro.recipebook.service.RecipeService;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static java.nio.file.StandardOpenOption.CREATE_NEW;
+
 @Service
+@Getter
 public class FileServiceImpl implements FileService {
     @Value("${path.to.data.files}")
     private String dataFilesPath;
@@ -102,6 +112,38 @@ public class FileServiceImpl implements FileService {
             } catch (IOException e) {
                 throw new NotFoundException("Директория не найдена");
             }
+        }
+    }
+
+    @Override
+    public ResponseEntity<InputStreamResource> downloadFile(String name) {
+        File file = new File(dataFilesPath + "/" + name);
+
+        try {
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(file.length())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name)
+                    .body(resource);
+        } catch (FileNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Override
+    public void uploadFile(MultipartFile file) throws IOException {
+        Path filePath = Path.of(dataFilesPath,file.getOriginalFilename());
+        Files.createDirectories(filePath.getParent());
+        Files.deleteIfExists(filePath);
+
+        try (
+                InputStream is = file.getInputStream();
+                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+                BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
+        ) {
+            bis.transferTo(bos);
         }
     }
 }

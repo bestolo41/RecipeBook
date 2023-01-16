@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skypro.recipebook.model.Ingredient;
 import com.skypro.recipebook.model.NotFoundException;
 import com.skypro.recipebook.model.ReAddingException;
-import com.skypro.recipebook.model.Recipe;
 import com.skypro.recipebook.service.FileService;
 import com.skypro.recipebook.service.IngredientService;
 import org.springframework.stereotype.Service;
@@ -85,7 +84,8 @@ public class IngredientServiceImpl implements IngredientService {
         }
     }
 
-    private void readFromIngredientFile() {
+    @Override
+    public void readFromIngredientFile() {
         String json = fileService.readFromIngredientFile();
         try {
             ingredients = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Ingredient>>() {

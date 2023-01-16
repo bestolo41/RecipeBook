@@ -13,9 +13,6 @@ import org.springframework.stereotype.Service;
 
 
 import javax.annotation.PostConstruct;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -57,7 +54,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public String edit(int id, Recipe newRecipe) {
-        if (recipeBook.containsKey(id)) {
+       if (recipeBook.containsKey(id)) {
             Recipe oldRecipe = recipeBook.get(id);
             recipeBook.put(id, newRecipe);
             saveToRecipeFile();
@@ -134,7 +131,8 @@ public class RecipeServiceImpl implements RecipeService {
         return recipesForResponse;
     }
 
-    private void saveToRecipeFile() {
+    @Override
+    public void saveToRecipeFile() {
         try {
             String json = new ObjectMapper().writeValueAsString(recipeBook);
             fileService.saveToRecipeFile(json);
@@ -143,7 +141,8 @@ public class RecipeServiceImpl implements RecipeService {
         }
     }
 
-    private void readFromRecipeFile() {
+    @Override
+    public void readFromRecipeFile() {
         String json = fileService.readFromRecipeFile();
         try {
             recipeBook = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Recipe>>() {
