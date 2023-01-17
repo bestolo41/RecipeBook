@@ -1,4 +1,4 @@
-package com.skypro.recipebook.model;
+package com.skypro.recipebook.model.exceptions;
 
 public class ReAddingException extends RuntimeException {
     public ReAddingException(String message) {
