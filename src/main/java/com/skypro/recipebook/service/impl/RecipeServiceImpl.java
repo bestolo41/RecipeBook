@@ -4,15 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skypro.recipebook.model.Ingredient;
-import com.skypro.recipebook.model.NotFoundException;
-import com.skypro.recipebook.model.ReAddingException;
+import com.skypro.recipebook.model.exceptions.NotFoundException;
+import com.skypro.recipebook.model.exceptions.ReAddingException;
 import com.skypro.recipebook.model.Recipe;
+import com.skypro.recipebook.model.exceptions.ReadingException;
 import com.skypro.recipebook.service.FileService;
 import com.skypro.recipebook.service.RecipeService;
 import org.springframework.stereotype.Service;
 
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -137,7 +143,7 @@ public class RecipeServiceImpl implements RecipeService {
             String json = new ObjectMapper().writeValueAsString(recipeBook);
             fileService.saveToRecipeFile(json);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new ReadingException("Не удалось считать данные");
         }
     }
 
@@ -148,10 +154,37 @@ public class RecipeServiceImpl implements RecipeService {
             recipeBook = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Recipe>>() {
             });
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new ReadingException("Не удалось считать данные");
         }
     }
 
+    @Override
+    public Path createRecipeBook() throws IOException {
+        readFromRecipeFile();
+
+        Path path = fileService.createTempFile("RecipeBook");
+        for (Recipe recipe : recipeBook.values()) {
+            try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+
+                writer.append(recipe.getName() + "\n" +
+                        "Время приготовления: " + recipe.getTime() + " минут.\n" +
+                        "Ингредиенты:\n");
+
+                for (Ingredient ingredient : recipe.getIngredients()) {
+                    writer.append("\t- " + ingredient.getName() + " - " + (ingredient.getCount() == 0 ? "" : ingredient.getCount() + " ") + ingredient.getMeasureUnit() + "\n");
+                }
+
+                writer.append("Инструкция приготовления:\n");
+
+                for (int i = 0; i < recipe.getGuide().size(); i++) {
+                    writer.append("\t" + (i + 1) + ". " + recipe.getGuide().get(i) + "\n");
+                }
+                writer.append("\n");
+
+            }
+        }
+        return path;
+    }
 
 
 }

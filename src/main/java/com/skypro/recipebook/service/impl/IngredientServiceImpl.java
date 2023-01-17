@@ -4,8 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skypro.recipebook.model.Ingredient;
-import com.skypro.recipebook.model.NotFoundException;
-import com.skypro.recipebook.model.ReAddingException;
+import com.skypro.recipebook.model.exceptions.NotFoundException;
+import com.skypro.recipebook.model.exceptions.ReAddingException;
+import com.skypro.recipebook.model.exceptions.ReadingException;
 import com.skypro.recipebook.service.FileService;
 import com.skypro.recipebook.service.IngredientService;
 import org.springframework.stereotype.Service;
@@ -80,7 +81,7 @@ public class IngredientServiceImpl implements IngredientService {
             String json = new ObjectMapper().writeValueAsString(ingredients);
             fileService.saveToIngredientFile(json);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new ReadingException("Не удалось считать данные");
         }
     }
 
@@ -91,7 +92,7 @@ public class IngredientServiceImpl implements IngredientService {
             ingredients = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Ingredient>>() {
             });
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new ReadingException("Не удалось считать данные");
         }
     }
 }

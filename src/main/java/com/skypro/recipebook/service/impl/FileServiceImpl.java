@@ -1,8 +1,9 @@
 package com.skypro.recipebook.service.impl;
 
-import com.skypro.recipebook.model.NotFoundException;
+import com.skypro.recipebook.model.exceptions.FileCreationException;
+import com.skypro.recipebook.model.exceptions.NotFoundException;
+import com.skypro.recipebook.model.exceptions.ReadingException;
 import com.skypro.recipebook.service.FileService;
-import com.skypro.recipebook.service.RecipeService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -44,7 +45,7 @@ public class FileServiceImpl implements FileService {
             createEmptyRecipeFileIfNotExists();
             return Files.readString(Path.of(dataFilesPath, recipesFileName));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReadingException("Не удалось считать данные");
         }
     }
     @Override
@@ -88,7 +89,7 @@ public class FileServiceImpl implements FileService {
             createEmptyIngredientFileIfNotExists();
             return Files.readString(Path.of(dataFilesPath, ingredientsFileName));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReadingException("Не удалось считать данные");
         }
     }
     @Override
@@ -144,6 +145,15 @@ public class FileServiceImpl implements FileService {
                 BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
         ) {
             bis.transferTo(bos);
+        }
+    }
+
+    @Override
+    public Path createTempFile(String suffix) {
+        try {
+            return Files.createTempFile(Path.of(dataFilesPath), "tempFile", suffix);
+        } catch (IOException e) {
+            throw new FileCreationException("Не удалось создать временный файл");
         }
     }
 }

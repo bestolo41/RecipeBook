@@ -3,8 +3,11 @@ package com.skypro.recipebook.service;
 import com.skypro.recipebook.model.Ingredient;
 import com.skypro.recipebook.model.Recipe;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 public interface RecipeService {
     public String add(Recipe recipe);
@@ -19,9 +22,11 @@ public interface RecipeService {
 
     HashSet<Recipe> findRecipeByFewIngredients(LinkedList<Ingredient> ingredients);
 
-    LinkedList<Recipe> recipesPageByPage(int page);
+    List<Recipe> recipesPageByPage(int page);
 
     void saveToRecipeFile();
 
     void readFromRecipeFile();
+
+    Path createRecipeBook() throws IOException;
 }

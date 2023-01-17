@@ -1,4 +1,4 @@
-package com.skypro.recipebook.model;
+package com.skypro.recipebook.model.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

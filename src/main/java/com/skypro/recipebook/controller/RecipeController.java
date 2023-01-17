@@ -1,19 +1,16 @@
 package com.skypro.recipebook.controller;
 
-import com.skypro.recipebook.model.AppError;
 import com.skypro.recipebook.model.Ingredient;
 import com.skypro.recipebook.model.Recipe;
 import com.skypro.recipebook.service.RecipeService;
-import com.skypro.recipebook.service.impl.RecipeServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.NameNotFoundException;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/recipes")
@@ -85,7 +82,7 @@ public class RecipeController {
             summary = "Получить все рецепты постранично",
             description = "Укажите номер страницы, чтобы получить рецепты из этой страницы"
     )
-    public ResponseEntity<LinkedList<Recipe>> getAllRecipesPageByPage(@RequestParam int page) {
+    public ResponseEntity<List<Recipe>> getAllRecipesPageByPage(@RequestParam int page) {
         return ResponseEntity.ok(recipeService.recipesPageByPage(page));
     }
 }

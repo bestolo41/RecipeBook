@@ -7,12 +7,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/files")
@@ -43,12 +48,37 @@ public class FilesController {
         return fileService.downloadFile(recipesFileName);
     }
 
+    @GetMapping("/export/recipesBook")
+    @Operation(
+            summary = "Скачать книгу рецептов"
+    )
+    private ResponseEntity<Object> downloadRecipesBook() {
+        try {
+            Path path = recipeService.createRecipeBook();
+            if (Files.size(path) == 0) {
+                return ResponseEntity.noContent().build();
+            }
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=RecipeBook.txt")
+                    .body(resource);
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.toString());
+        }
+
+    }
+
     @GetMapping("/export/ingredients")
     @Operation(
             summary = "Скачать файл ингредиентов",
             description = "Скачивает файл со всеми ингредиентами"
     )
     private ResponseEntity<InputStreamResource> downloadIngredientsFile() {
+
         return fileService.downloadFile(ingredientsFileName);
     }
 
